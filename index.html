@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Survivor Games</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="icon" href="favicon.ico" />
+  <style>
+    /* Ensure full images */
+    #castaway-image, #player-image-display { object-fit: contain; }
+  </style>
+</head>
+<body class="bg-black text-[#ececec] flex items-center justify-center min-h-screen">
+
+  <div id="app-container" class="bg-[#172454] p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md mx-4 relative">
+
+    <!-- Main Menu -->
+    <div id="main-menu" class="space-y-4">
+      <h1 class="text-3xl font-bold text-center text-[#a3db9a]">Survivor Name Game</h1>
+      <button data-game="name-game" class="game-menu-btn w-full py-2 bg-[#a3db9a] text-black rounded">Start Name Game</button>
+      <button data-game="grid-game" class="game-menu-btn w-full py-2 bg-[#ececec] text-black rounded">Start Grid Game</button>
+      <button data-game="season-creator" class="game-menu-btn w-full py-2 bg-[#ececec] text-black rounded">Season Creator</button>
+      <div class="flex justify-end space-x-4 mt-4">
+        <a href="#" id="admin-login-link" class="text-sm text-gray-400 hover:text-white">Admin Login</a>
+        <a href="#" id="admin-panel-btn" class="text-sm text-gray-400 hover:text-white hidden">Admin Panel</a>
+        <button id="leaderboard-btn" class="text-sm text-gray-400 hover:text-white">Leaderboards</button>
+      </div>
+    </div>
+
+    <!-- Name Game Container -->
+    <div id="name-game-container" class="hidden">
+      <!-- Start Screen -->
+      <div id="start-screen" class="space-y-4">
+        <input id="username-input" type="text" placeholder="Enter your name" class="w-full p-2 rounded bg-black/20 text-white" />
+        <div id="version-filter" class="flex space-x-2">
+          <label class="inline-flex items-center"><input type="checkbox" data-country="aus" checked class="mr-1">AUS</label>
+          <label class="inline-flex items-center"><input type="checkbox" data-country="us" checked class="mr-1">US</label>
+          <label class="inline-flex items-center"><input type="checkbox" data-country="nz" checked class="mr-1">NZ</label>
+          <label class="inline-flex items-center"><input type="checkbox" data-country="za" checked class="mr-1">ZA</label>
+        </div>
+        <button id="start-btn" class="w-full py-2 bg-[#a3db9a] text-black rounded">Start Game</button>
+      </div>
+
+      <!-- Game Play Screen -->
+      <div id="game-play-screen" class="hidden space-y-4 relative">
+        <div id="timer-bar" class="h-2 bg-green-500 rounded"></div>
+        <img id="castaway-image" class="w-full h-48 object-contain" alt="Castaway" />
+        <input id="guess-input" type="text" placeholder="Type your guess..." class="w-full p-2 rounded bg-black/20 text-white" autocomplete="off" />
+        <div id="autocomplete-list" class="absolute bg-white text-black w-full rounded shadow hidden"></div>
+        <div class="flex justify-between text-sm">
+          <div>Score: <span id="current-score">0</span></div>
+          <div>High Score: <span id="high-score">0</span></div>
+        </div>
+        <div class="flex space-x-2">
+          <button id="skip-btn" class="flex-1 py-2 bg-gray-600 rounded">Skip</button>
+          <button id="give-up-btn" class="flex-1 py-2 bg-red-600 rounded">Give Up</button>
+        </div>
+      </div>
+
+      <!-- Game Over Screen -->
+      <div id="game-over-screen" class="hidden space-y-4">
+        <div id="correct-answer-info" class="hidden text-red-400"></div>
+        <div>Your final score: <span id="final-score">0</span></div>
+        <div id="new-high-score-msg" class="hidden text-green-400">New High Score!</div>
+        <div id="player-rank-info" class="hidden text-sm mt-2"></div>
+        <div class="flex space-x-2">
+          <button id="play-again-btn" class="flex-1 py-2 bg-[#a3db9a] text-black rounded">Play Again</button>
+          <button class="back-to-menu-btn flex-1 py-2 bg-red-600 rounded">Give Up</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grid Game Container -->
+    <div id="grid-game-container" class="hidden">
+      <button class="back-to-menu-btn text-sm text-gray-400 hover:text-white mb-4">← Back to Menu</button>
+      <div id="grid-game-content"></div>
+    </div>
+
+    <!-- Season Creator Container -->
+    <div id="season-creator-container" class="hidden">
+      <button class="back-to-menu-btn text-sm text-gray-400 hover:text-white mb-4">← Back to Menu</button>
+      <div id="season-creator-content"></div>
+    </div>
+
+  </div>
+
+  <!-- Admin Login Modal -->
+  <div id="admin-login-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center hidden">
+    <div class="bg-[#172454] p-6 rounded-lg w-full max-w-xs">
+      <h2 class="text-xl font-bold mb-4 text-[#a3db9a]">Admin Login</h2>
+      <div id="admin-error" class="text-red-500 mb-2 hidden"></div>
+      <input id="admin-email" type="email" placeholder="Email" class="w-full p-2 mb-2 rounded bg-black/20 text-white" />
+      <input id="admin-password" type="password" placeholder="Password" class="w-full p-2 mb-4 rounded bg-black/20 text-white" />
+      <div class="flex justify-end space-x-2">
+        <button id="admin-cancel-btn" class="px-4 py-2 bg-gray-600 rounded">Cancel</button>
+        <button id="admin-login-btn" class="px-4 py-2 bg-[#a3db9a] text-black rounded">Login</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaderboard Modal -->
+  <div id="leaderboard-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center hidden">
+    <div class="bg-[#172454] p-6 rounded-lg w-full max-w-sm">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-[#a3db9a]">Leaderboards</h2>
+        <button id="leaderboard-close-btn" class="text-gray-400 hover:text-white">✕</button>
+      </div>
+      <div class="flex space-x-2 mb-4">
+        <button data-leaderboard="daily" class="leaderboard-tab-btn text-gray-400 hover:text-[#a3db9a] pb-1">Today</button>
+        <button data-leaderboard="monthly" class="leaderboard-tab-btn text-gray-400 hover:text-[#a3db9a] pb-1">This Month</button>
+        <button data-leaderboard="all-time" class="leaderboard-tab-btn text-gray-400 hover:text-[#a3db9a] pb-1">All-Time</button>
+      </div>
+      <div id="leaderboard-content" class="max-h-64 overflow-y-auto"></div>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
